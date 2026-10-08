@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}劳动争议律师 AI 助理{% endblock %}</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #1f2937; background: #f3f4f6; }
+    body { max-width: 980px; margin: 0 auto; padding: 24px; }
+    main, section { background: white; padding: 20px; margin: 16px 0; border-radius: 10px; }
+    input, button { font: inherit; padding: 9px 12px; }
+    button { background: #1d4ed8; color: white; border: 0; border-radius: 6px; cursor: pointer; }
+    button:focus, input:focus, a:focus { outline: 3px solid #93c5fd; outline-offset: 2px; }
+    .warning { border-left: 5px solid #d97706; background: #fffbeb; padding: 12px; }
+    .error { color: #991b1b; background: #fee2e2; padding: 10px; }
+    .source { color: #4b5563; font-size: .9em; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; vertical-align: top; padding: 8px; border-bottom: 1px solid #ddd; }
+  </style>
+</head>
+<body><header><a href="/"><strong>劳动争议律师 AI 助理</strong></a></header>{% block body %}{% endblock %}</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<main>
+  <h1>案件</h1>
+  <form method="post" action="/cases">
+    <label for="name">案件名称</label>
+    <input id="name" name="name" required maxlength="120">
+    <button type="submit">新建案件</button>
+  </form>
+  <ul>{% for case in cases %}<li><a href="/cases/{{ case.id }}">{{ case.name }}</a>（{{ case.status }}）</li>{% else %}<li>暂无案件</li>{% endfor %}</ul>
+</main>
+{% endblock %}

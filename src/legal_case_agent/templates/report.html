@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ case.name }}报告{% endblock %}
+{% block body %}
+<main>
+  <h1>{{ case.name }} · 案件资料包</h1>
+  <p class="warning"><strong>AI 辅助整理，不构成法律意见。</strong> 请律师对事实、证据与引用逐项核验。</p>
+  <p>报告版本：{{ version }}</p>
+</main>
+<section><h2>案件摘要</h2><dl><dt>案件类型</dt><dd>{{ report.summary.case_type }}</dd><dt>当事人</dt><dd>{{ report.summary.parties|join('、') or '待核实' }}</dd><dt>请求</dt><dd>{{ report.summary.claims|join('；') or '待核实' }}</dd><dt>金额</dt><dd>{{ report.summary.amounts|join('；') or '待核实' }}</dd><dt>程序阶段</dt><dd>{{ report.summary.stage }}</dd></dl><p class="source">来源：{{ report.summary.sources|join('；') or '待核实' }}</p></section>
+<section><h2>案件时间轴</h2><table><thead><tr><th>日期</th><th>事件</th><th>来源</th></tr></thead><tbody>{% for item in report.timeline %}<tr><td>{{ item.date }}</td><td>{{ item.event }}（{{ item.confidence }}）</td><td class="source">{{ item.sources|join('；') }}</td></tr>{% else %}<tr><td colspan="3">暂无可确认事件</td></tr>{% endfor %}</tbody></table></section>
+<section><h2>证据目录</h2>{% for item in report.evidence %}<article><h3>{{ item.name }}</h3><p>证明事项：{{ item.purpose }}</p><p>真实性：{{ item.authenticity }}；合法性：{{ item.legality }}；关联性：{{ item.relevance }}</p><p>风险：{{ item.risks|join('；') or '无已识别风险' }}</p><p class="source">来源：{{ item.sources|join('；') }}</p></article>{% else %}<p>暂无证据条目</p>{% endfor %}</section>
+<section><h2>争议焦点</h2>{% for item in report.issues %}<article><h3>{{ item.title }}</h3><p>申请方：{{ item.claimant_position }}</p><p>被申请方：{{ item.respondent_position }}</p><p>已知事实：{{ item.known_facts|join('；') or '待核实' }}</p><p>待核实：{{ item.verification_needed|join('；') or '无' }}</p><p class="source">来源：{{ item.sources|join('；') or '待核实' }}</p></article>{% else %}<p>暂无争议焦点</p>{% endfor %}</section>
+<section><h2>材料缺失项</h2><ul>{% for item in report.missing_materials %}<li>{{ item }}</li>{% else %}<li>未识别</li>{% endfor %}</ul></section>
+<section><h2>庭审准备清单</h2><ul>{% for item in report.hearing_checklist %}<li>{{ item }}</li>{% else %}<li>未生成</li>{% endfor %}</ul></section>
+<section><h2>人工复核</h2><ul>{% for item in report.manual_review %}<li class="warning">{{ item }}</li>{% else %}<li>无额外事项</li>{% endfor %}</ul><p class="warning"><strong>AI 辅助整理，不构成法律意见。</strong></p></section>
+{% endblock %}

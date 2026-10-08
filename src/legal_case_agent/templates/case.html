@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ case.name }}{% endblock %}
+{% block body %}
+<main>
+  <h1>{{ case.name }}</h1>
+  {% for error in errors %}<p class="error" role="alert">{{ error }}</p>{% endfor %}
+  <h2>上传案件材料</h2>
+  <form method="post" action="/cases/{{ case.id }}/documents" enctype="multipart/form-data">
+    <label for="files">PDF、DOCX、TXT、PNG、JPG</label>
+    <input id="files" type="file" name="files" multiple required accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">
+    <button type="submit">上传</button>
+  </form>
+  <h2>已上传材料</h2>
+  <ul>{% for doc in documents %}<li>{{ doc.original_name }} — {{ doc.parse_status }}{% if doc.warning %}（{{ doc.warning }}）{% endif %}</li>{% else %}<li>暂无材料</li>{% endfor %}</ul>
+  <form method="post" action="/cases/{{ case.id }}/analyze"><button type="submit">生成案件资料包</button></form>
+  {% if case.status == 'analyzed' %}<p><a href="/cases/{{ case.id }}/report">查看最新报告</a></p>{% endif %}
+</main>
+{% endblock %}

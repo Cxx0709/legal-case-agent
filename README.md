@@ -46,37 +46,37 @@ AI 律师助理 Agent：律师上传案件文件夹（仲裁材料 + 聊天记�
                  案件报告
 ```
 
-详见 [docs/agent-flow.md](docs/agent-flow.md)。
+## 快速开始
 
-## 快速开始（MVP 演示）
+需要 Python 3.10+ 和一个 OpenAI 兼容模型接口：
 
-零依赖，Python 3.10+ 即可运行演示：
-
-```bash
-python3 src/main.py
+```powershell
+py -3.10 -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -e ".[test]"
+Copy-Item .env.example .env
 ```
 
-用一份模拟劳动争议案件（劳动合同 + 工资流水 + 微信聊天记录 + 社保记录 + 仲裁申请书）跑完全流程，输出完整案件报告。演示使用内置 Mock LLM；接入真实模型只需设置环境变量：
+设置 `LLM_API_KEY`、`LLM_BASE_URL` 和 `LLM_MODEL` 后启动：
 
-```bash
-export LLM_API_KEY="..."        # OpenAI 兼容接口
-export LLM_BASE_URL="https://..." 
-export LLM_MODEL="..."
-python3 src/main.py --real-llm
+```powershell
+uvicorn legal_case_agent.app:app --host 127.0.0.1 --port 8000
 ```
 
-运行测试：
+浏览器打开 `http://127.0.0.1:8000`。运行测试：
 
-```bash
-python3 -m pytest tests/ -v
+```powershell
+python -m pytest -v
 ```
+
+支持 PDF、DOCX、TXT、PNG、JPG 和 JPEG。图片及扫描型 PDF 当前会标记为需要人工查看或 OCR；首版不内置 OCR、法律数据库检索、用户权限或云端存储。
+
+> 默认仅监听本机。请勿将真实客户材料发送给未经律所审查的数据处理方或模型服务商。
 
 ## 文档
 
-- [docs/product-design.md](docs/product-design.md) — 完整产品设计：市场、用户、功能、商业模式、定价、路线图
-- [docs/agent-flow.md](docs/agent-flow.md) — Agent 流程：各 Agent 输入输出、编排策略、失败降级
-- [docs/database-design.md](docs/database-design.md) — 数据库设计：7 张核心表 DDL
-- [docs/prompts.md](docs/prompts.md) — Prompt 设计：5 个 Agent 的完整提示词与调优说明
+- [MVP 设计规格](docs/superpowers/specs/2026-10-08-labor-dispute-ai-assistant-design.md)
+- [实施计划](docs/superpowers/plans/2026-10-08-labor-dispute-ai-assistant-mvp.md)
 
 ## 技术栈建议
 
