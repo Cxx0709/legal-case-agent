@@ -2,6 +2,8 @@
 .venv/
 venv/
 data/
+!data/synthetic/
+!data/synthetic/**
 *.db
 __pycache__/
 *.py[cod]
@@ -9,3 +11,4 @@ __pycache__/
 *.egg-info/
 .idea/
 .pytest-tmp/
+reports/

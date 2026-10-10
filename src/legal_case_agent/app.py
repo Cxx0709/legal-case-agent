@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 
 from fastapi import FastAPI, Form, Request, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from .config import Settings
@@ -95,9 +95,24 @@ def create_app(settings: Settings | None = None, client: LLMClient | None = None
         if not case or not row:
             return HTMLResponse("报告不存在", status_code=404)
         report = CaseReport.model_validate(json.loads(row["content_json"]))
+        run = connection.execute("SELECT model FROM analysis_runs WHERE id = ?", (row["run_id"],)).fetchone()
         return templates.TemplateResponse(
-            request, "report.html", {"case": case, "report": report, "version": row["version"]}
+            request, "report.html", {"case": case, "report": report, "version": row["version"], "model": run["model"]}
         )
+
+    @app.get("/cases/{case_id}/report.md", response_class=PlainTextResponse)
+    def report_markdown(case_id: str):
+        case, row = get_case(connection, case_id), get_latest_report(connection, case_id)
+        if not case or not row:
+            return PlainTextResponse("报告不存在", status_code=404)
+        report = CaseReport.model_validate(json.loads(row["content_json"]))
+        lines = [f"# {case['name']} · 案件资料包", "", "> AI 辅助整理，不构成法律意见；所有内容必须人工核验。", "", "## 案件摘要", f"- 案件类型：{report.summary.case_type}", f"- 程序阶段：{report.summary.stage}", f"- 当事人：{'、'.join(report.summary.parties) or '待核实'}", f"- 来源：{'；'.join(report.summary.sources) or '待核实'}", "", "## 时间线"]
+        for item in report.timeline:
+            lines.append(f"- **{item.date}** {item.event}（来源：{'；'.join(item.sources) or '待核实'}）")
+        lines += ["", "## 材料缺失与待核实"]
+        lines.extend(f"- {item}" for item in report.missing_materials)
+        lines.extend(f"- **{item.topic}**：{item.reason}（来源：{'；'.join(item.sources) or '待补充'}）" for item in report.verification_items)
+        return PlainTextResponse("\n".join(lines) + "\n", media_type="text/markdown; charset=utf-8", headers={"Content-Disposition": f'attachment; filename="case-{case_id}.md"'})
 
     return app
 

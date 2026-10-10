@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "cases": [
+    {
+      "id": "case-001",
+      "expected_documents": ["劳动合同.txt", "工资记录.txt", "沟通记录.txt"],
+      "required_sources": ["劳动合同.txt，第 1 段", "工资记录.txt，第 1 段", "沟通记录.txt，第 1 段"],
+      "must_review": ["2024年6月工资是否实际支付"]
+    },
+    {
+      "id": "case-002",
+      "expected_documents": ["员工陈述.txt", "公司说明.txt"],
+      "required_sources": ["员工陈述.txt，第 1 段", "公司说明.txt，第 1 段"],
+      "must_review": ["入职日期存在冲突", "离职日期存在冲突", "缺少考勤记录"]
+    }
+  ]
+}

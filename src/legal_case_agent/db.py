@@ -48,6 +48,11 @@ def init_db(connection: sqlite3.Connection) -> None:
             ON reports(run_id, version);
         """
     )
+    # A process restart cannot leave an analysis falsely claiming to run.
+    connection.execute(
+        "UPDATE analysis_runs SET status = 'failed', error = ?, finished_at = ? WHERE status = 'running'",
+        ("服务重启，分析任务已终止", _now()),
+    )
     connection.commit()
 
 

@@ -41,6 +41,12 @@ class Issue(StrictModel):
     sources: list[str] = Field(default_factory=list)
 
 
+class VerificationItem(StrictModel):
+    topic: str
+    reason: str
+    sources: list[str] = Field(default_factory=list)
+
+
 class CaseReport(StrictModel):
     summary: Summary
     timeline: list[TimelineEvent]
@@ -49,3 +55,4 @@ class CaseReport(StrictModel):
     missing_materials: list[str]
     hearing_checklist: list[str]
     manual_review: list[str]
+    verification_items: list[VerificationItem] = Field(default_factory=list)

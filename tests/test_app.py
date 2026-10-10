@@ -39,3 +39,6 @@ def test_complete_local_workflow(tmp_path):
     assert "案件摘要" in report.text
     assert "聊天记录.txt，第 1 段" in report.text
     assert "AI 辅助整理，不构成法律意见" in report.text
+    exported = client.get(f"/cases/{case_id}/report.md")
+    assert exported.status_code == 200
+    assert "案件资料包" in exported.text

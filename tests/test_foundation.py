@@ -11,6 +11,19 @@ def test_create_and_read_case(tmp_path):
     assert get_case(connection, case_id)["name"] == "张某劳动争议"
 
 
+def test_init_db_marks_interrupted_runs_failed(tmp_path):
+    connection = connect(tmp_path / "app.db")
+    init_db(connection)
+    connection.execute("INSERT INTO cases VALUES (?, ?, ?, ?, ?)", ("case", "测试", "draft", "now", "now"))
+    connection.execute("INSERT INTO analysis_runs VALUES (?, ?, ?, ?, ?, ?, ?)", ("run", "case", "running", "model", None, "now", None))
+    connection.commit()
+    init_db(connection)
+    run = connection.execute("SELECT status, error, finished_at FROM analysis_runs WHERE id = 'run'").fetchone()
+    assert run["status"] == "failed"
+    assert run["error"] == "服务重启，分析任务已终止"
+    assert run["finished_at"]
+
+
 def test_safe_upload(tmp_path):
     stored = save_upload("case1", "../工资记录.txt", "工资 8000".encode(), tmp_path, 1)
     assert stored.original_name == "工资记录.txt"

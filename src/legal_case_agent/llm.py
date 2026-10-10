@@ -12,7 +12,7 @@ class AnalysisError(RuntimeError):
 
 
 SYSTEM_PROMPT = """你是中国劳动争议律师的材料整理助理。只依据提供的材料输出中文 JSON。
-不得补造事实、法条或案例；无法确认的内容放入 manual_review。每项事实必须引用输入中的完整 source_label。
+不得补造事实、法条或案例；无法确认的内容放入 manual_review 或 verification_items。每项事实必须引用输入中的完整 source_label。
 输出字段必须严格符合给定 JSON Schema。你的工作是整理材料，不是提供法律意见。"""
 
 

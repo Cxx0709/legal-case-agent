@@ -31,3 +31,10 @@ def test_client_rejects_material_over_input_limit():
     client = LLMClient("key", "https://model.test/v1", "model", max_material_chars=20)
     with pytest.raises(AnalysisError, match="材料过长"):
         client.generate_report([SourceChunk("doc", "材料.txt，第 1 段", "这是一段很长的材料")], [])
+
+
+def test_report_allows_verification_items():
+    report = VALID_REPORT | {"verification_items": [{"topic": "日期冲突", "reason": "两份材料记载不同日期", "sources": []}]}
+    assert LLMClient("key", "https://model.test/v1", "model").model == "model"
+    from legal_case_agent.models import CaseReport
+    assert CaseReport.model_validate(report).verification_items[0].topic == "日期冲突"
