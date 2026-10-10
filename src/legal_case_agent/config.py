@@ -10,6 +10,8 @@ class Settings:
     llm_model: str = "deepseek-chat"
     app_data_dir: Path = Path("data")
     max_file_mb: int = 20
+    max_case_mb: int = 200
+    max_material_chars: int = 200_000
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -19,4 +21,6 @@ class Settings:
             llm_model=os.getenv("LLM_MODEL", cls.llm_model),
             app_data_dir=Path(os.getenv("APP_DATA_DIR", "data")),
             max_file_mb=int(os.getenv("MAX_FILE_MB", "20")),
+            max_case_mb=int(os.getenv("MAX_CASE_MB", "200")),
+            max_material_chars=int(os.getenv("MAX_MATERIAL_CHARS", "200000")),
         )

@@ -69,7 +69,7 @@ uvicorn legal_case_agent.app:app --host 127.0.0.1 --port 8000
 python -m pytest -v
 ```
 
-支持 PDF、DOCX、TXT、PNG、JPG 和 JPEG。图片及扫描型 PDF 当前会标记为需要人工查看或 OCR；首版不内置 OCR、法律数据库检索、用户权限或云端存储。
+支持 PDF、DOCX、TXT、PNG、JPG 和 JPEG，单文件默认 20 MB、单案件材料默认 200 MB、单次模型输入默认 200,000 字符（可通过 `MAX_FILE_MB`、`MAX_CASE_MB` 和 `MAX_MATERIAL_CHARS` 调整）。图片及扫描型 PDF 当前会标记为需要人工查看或 OCR；首版不内置 OCR、法律数据库检索、用户权限或云端存储。
 
 > 默认仅监听本机。请勿将真实客户材料发送给未经律所审查的数据处理方或模型服务商。
 

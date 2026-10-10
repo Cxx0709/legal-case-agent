@@ -18,7 +18,10 @@ def create_app(settings: Settings | None = None, client: LLMClient | None = None
     settings.app_data_dir.mkdir(parents=True, exist_ok=True)
     connection = connect(settings.app_data_dir / "app.db")
     init_db(connection)
-    model_client = client or LLMClient(settings.llm_api_key, settings.llm_base_url, settings.llm_model)
+    model_client = client or LLMClient(
+        settings.llm_api_key, settings.llm_base_url, settings.llm_model,
+        max_material_chars=settings.max_material_chars,
+    )
     templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
     app = FastAPI(title="劳动争议律师 AI 助理")
 
@@ -57,8 +60,12 @@ def create_app(settings: Settings | None = None, client: LLMClient | None = None
         errors = []
         for upload in files:
             try:
+                content = await upload.read()
+                existing_size = sum(row["size_bytes"] for row in list_documents(connection, case_id))
+                if existing_size + len(content) > settings.max_case_mb * 1024 * 1024:
+                    raise UploadError(f"案件材料总大小超过 {settings.max_case_mb} MB")
                 stored = save_upload(
-                    case_id, upload.filename or "", await upload.read(),
+                    case_id, upload.filename or "", content,
                     settings.app_data_dir, settings.max_file_mb, upload.content_type,
                 )
                 add_document(connection, case_id, stored, settings.app_data_dir)

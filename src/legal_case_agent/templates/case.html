@@ -1,18 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{ case.name }}{% endblock %}
+{% block title %}{{ case.name }} · 案序{% endblock %}
 {% block body %}
-<main>
-  <h1>{{ case.name }}</h1>
+<div class="content">
+  <div style="margin-bottom:22px"><div class="crumb" style="margin-bottom:14px"><a href="/">案件工作台</a> <span style="margin:0 6px">/</span> {{ case.name }}</div><div class="hero"><div><div class="eyebrow">CASE MATERIALS</div><h1 style="font-size:31px">{{ case.name }}</h1><p class="muted" style="margin:0">把分散的材料，整理成一份可核验的案件资料包。</p></div>{% if case.status == 'analyzed' %}<a class="btn btn-soft" href="/cases/{{ case.id }}/report">查看最新报告　→</a>{% endif %}</div></div>
   {% for error in errors %}<p class="error" role="alert">{{ error }}</p>{% endfor %}
-  <h2>上传案件材料</h2>
-  <form method="post" action="/cases/{{ case.id }}/documents" enctype="multipart/form-data">
-    <label for="files">PDF、DOCX、TXT、PNG、JPG</label>
-    <input id="files" type="file" name="files" multiple required accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">
-    <button type="submit">上传</button>
-  </form>
-  <h2>已上传材料</h2>
-  <ul>{% for doc in documents %}<li>{{ doc.original_name }} — {{ doc.parse_status }}{% if doc.warning %}（{{ doc.warning }}）{% endif %}</li>{% else %}<li>暂无材料</li>{% endfor %}</ul>
-  <form method="post" action="/cases/{{ case.id }}/analyze"><button type="submit">生成案件资料包</button></form>
-  {% if case.status == 'analyzed' %}<p><a href="/cases/{{ case.id }}/report">查看最新报告</a></p>{% endif %}
-</main>
+  <div class="workspace-grid"><section class="panel panel-pad"><div class="section-head"><div><h2>上传案件材料</h2><div class="muted" style="font-size:12px;margin-top:5px">支持多选，单个文件不超过 20 MB</div></div><span class="badge badge-gray">{{ documents|length }} 份材料</span></div><form method="post" action="/cases/{{ case.id }}/documents" enctype="multipart/form-data"><label class="upload-zone" for="files"><span class="upload-icon">↑</span><strong>拖入文件，或点击选择</strong><span>PDF · DOCX · TXT · PNG · JPG</span><input id="files" type="file" name="files" multiple required accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"></label><button class="btn btn-primary" type="submit">上传材料</button></form><div style="margin-top:28px"><div class="section-head"><h2 style="font-size:15px">已上传材料</h2><span class="muted" style="font-size:12px">解析状态</span></div><div class="doc-list">{% for doc in documents %}<div class="doc-row"><span class="file-icon">{{ doc.extension[1:]|upper }}</span><span class="doc-name" title="{{ doc.original_name }}">{{ doc.original_name }}</span><span class="badge {% if doc.parse_status == 'parsed' %}badge-green{% elif doc.parse_status == 'failed' %}badge-amber{% else %}badge-gray{% endif %}">{% if doc.parse_status == 'parsed' %}已解析{% elif doc.parse_status == 'failed' %}需复核{% else %}待分析{% endif %}</span></div>{% else %}<div class="empty">上传材料后会显示在这里</div>{% endfor %}</div></div></section><aside class="panel side-card"><div class="eyebrow">WORKFLOW</div><h2 style="margin-top:6px">案件整理流程</h2><ol class="side-list" style="list-style:none;padding-left:0"><li><span>01　材料上传</span><strong class="badge badge-green">当前</strong></li><li><span>02　事实提取</span><strong>待开始</strong></li><li><span>03　证据梳理</span><strong>待开始</strong></li><li><span>04　报告生成</span><strong>待开始</strong></li></ol><div style="margin-top:22px;padding-top:17px;border-top:1px solid var(--line)"><form method="post" action="/cases/{{ case.id }}/analyze"><button class="btn btn-primary" style="width:100%" type="submit">✦ 生成案件资料包</button></form><p class="muted" style="font-size:11px;margin:10px 0 0;text-align:center">生成前请确认材料已上传完整</p></div></aside></div>
+</div>
 {% endblock %}

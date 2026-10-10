@@ -14,6 +14,12 @@ def _safe_error(exc: Exception) -> str:
 def run_analysis(
     connection: sqlite3.Connection, case_id: str, data_dir: Path, client: LLMClient
 ) -> str:
+    running = connection.execute(
+        "SELECT 1 FROM analysis_runs WHERE case_id = ? AND status = 'running' LIMIT 1",
+        (case_id,),
+    ).fetchone()
+    if running:
+        raise RuntimeError("该案件已有分析任务正在运行，请稍后再试")
     run_id = uuid.uuid4().hex
     connection.execute(
         "INSERT INTO analysis_runs VALUES (?, ?, 'running', ?, NULL, ?, NULL)",

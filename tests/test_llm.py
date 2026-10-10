@@ -1,7 +1,9 @@
 import json
 import httpx
+import pytest
 
-from legal_case_agent.llm import LLMClient
+from legal_case_agent.llm import AnalysisError, LLMClient
+from legal_case_agent.parsers import SourceChunk
 
 
 VALID_REPORT = {
@@ -23,3 +25,9 @@ def test_client_retries_once_after_invalid_json():
     client = LLMClient("key", "https://model.test/v1", "model", httpx.MockTransport(handler))
     assert client.generate_report([], []).summary.case_type == "劳动争议"
     assert calls == 2
+
+
+def test_client_rejects_material_over_input_limit():
+    client = LLMClient("key", "https://model.test/v1", "model", max_material_chars=20)
+    with pytest.raises(AnalysisError, match="材料过长"):
+        client.generate_report([SourceChunk("doc", "材料.txt，第 1 段", "这是一段很长的材料")], [])

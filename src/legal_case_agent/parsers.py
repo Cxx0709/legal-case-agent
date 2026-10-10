@@ -33,7 +33,16 @@ def parse_document(document_id: str, original_name: str, path: Path) -> ParseRes
                 [],
             )
         if extension == ".docx":
-            parts = [p.text.strip() for p in Document(path).paragraphs if p.text.strip()]
+            document = Document(path)
+            parts = [p.text.strip() for p in document.paragraphs if p.text.strip()]
+            for table_index, table in enumerate(document.tables, 1):
+                rows = []
+                for row in table.rows:
+                    cells = [cell.text.strip() for cell in row.cells]
+                    if any(cells):
+                        rows.append(" | ".join(cells))
+                if rows:
+                    parts.append(f"表格 {table_index}：\n" + "\n".join(rows))
             return ParseResult(
                 [SourceChunk(document_id, f"{original_name}，第 {i} 段", part) for i, part in enumerate(parts, 1)],
                 [],

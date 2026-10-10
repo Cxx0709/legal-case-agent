@@ -40,6 +40,12 @@ def init_db(connection: sqlite3.Connection) -> None:
             version INTEGER NOT NULL, content_json TEXT NOT NULL,
             created_at TEXT NOT NULL
         );
+        CREATE INDEX IF NOT EXISTS idx_documents_case_created
+            ON documents(case_id, created_at);
+        CREATE INDEX IF NOT EXISTS idx_analysis_runs_case_status
+            ON analysis_runs(case_id, status);
+        CREATE INDEX IF NOT EXISTS idx_reports_run_version
+            ON reports(run_id, version);
         """
     )
     connection.commit()

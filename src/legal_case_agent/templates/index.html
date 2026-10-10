@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 {% block body %}
-<main>
-  <h1>案件</h1>
-  <form method="post" action="/cases">
-    <label for="name">案件名称</label>
-    <input id="name" name="name" required maxlength="120">
-    <button type="submit">新建案件</button>
-  </form>
-  <ul>{% for case in cases %}<li><a href="/cases/{{ case.id }}">{{ case.name }}</a>（{{ case.status }}）</li>{% else %}<li>暂无案件</li>{% endfor %}</ul>
-</main>
+<div class="content">
+  <div class="hero"><div class="hero-copy"><div class="eyebrow">CASE WORKSPACE</div><h1>把材料，变成<br><span style="color:var(--blue)">可工作的案件资料包。</span></h1><p>上传劳动争议材料，AI 帮你梳理事实、证据和时间线，把更多时间留给真正的法律判断。</p></div><form method="post" action="/cases" class="form-row"><input id="name" name="name" placeholder="输入案件名称" required maxlength="120" aria-label="案件名称"><button class="btn btn-primary" type="submit">＋ 新建案件</button></form></div>
+  <div class="stat-grid"><div class="panel stat"><div class="stat-label">全部案件</div><div class="stat-value">{{ cases|length }}</div></div><div class="panel stat"><div class="stat-label">本地处理</div><div class="stat-value">100<span style="font-size:14px">%</span></div></div><div class="panel stat"><div class="stat-label">整理模块</div><div class="stat-value">06</div></div></div>
+  <section class="panel panel-pad"><div class="section-head"><div><h2>案件列表</h2><div class="muted" style="font-size:12px;margin-top:5px">最近创建的案件</div></div><span class="badge badge-green">● 本地安全模式</span></div><div class="case-list">{% for case in cases %}<a class="case-card" href="/cases/{{ case.id }}"><div><div class="case-title">{{ case.name }}</div><div class="case-meta">创建于 {{ case.created_at[:10] }} · 劳动争议案件</div></div><div style="display:flex;align-items:center;gap:12px"><span class="badge {% if case.status == 'analyzed' %}badge-green{% else %}badge-gray{% endif %}">{% if case.status == 'analyzed' %}已生成报告{% else %}待整理{% endif %}</span><span class="muted">›</span></div></a>{% else %}<div class="empty"><div style="font-size:28px;margin-bottom:8px">▱</div><strong style="color:var(--ink)">还没有案件</strong><div style="margin-top:5px">新建一个案件，开始整理第一份材料。</div></div>{% endfor %}</div></section>
+</div>
 {% endblock %}

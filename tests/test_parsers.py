@@ -15,3 +15,19 @@ def test_image_is_marked_for_manual_review(tmp_path):
     result = parse_document("doc2", path.name, path)
     assert not result.chunks
     assert "人工查看" in result.warnings[0]
+
+
+def test_docx_table_is_included(tmp_path):
+    from docx import Document
+
+    document = Document()
+    table = document.add_table(rows=2, cols=2)
+    table.cell(0, 0).text = "月份"
+    table.cell(0, 1).text = "工资"
+    table.cell(1, 0).text = "一月"
+    table.cell(1, 1).text = "8000"
+    path = tmp_path / "工资.docx"
+    document.save(path)
+
+    result = parse_document("doc", path.name, path)
+    assert any("月份 | 工资" in chunk.text and "一月 | 8000" in chunk.text for chunk in result.chunks)
